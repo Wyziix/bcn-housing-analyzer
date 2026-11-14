@@ -67,11 +67,12 @@ The starter code came from an AI chat. We checked it and found these problems. F
 - Keep the `id` and `snapshot` columns (#3 needs them).
 
 **#2 market_benchmarks.py / data**
-- The "Idealista October 2026" district table and the 2021–2026 history in the chat were **typed out by the AI, not downloaded**. Its YoY column shows +5–9% everywhere, but Idealista reported Barcelona rents falling in 2026. Replace with real figures:
-  - Idealista Barcelona rent + sale report by district (idealista.com → "Informes de precios" → Barcelona). Add the report month and URL as columns or in a comment.
-  - Open Data BCN "Lloguer mitjà mensual" for the history.
-  - If there is no time before Monday, keep the file but name it `idealista_approx.csv` and say "approximate" on the slide.
-- The chat claimed Eixample yields "~4.7% long-term vs ~6.2% short-term". The code actually gives about **4.7% vs 8.3%** for 75 m² at €135/night. Always quote what the code prints.
+- ✅ **Fixed (PR #1).** The AI's data was a mix of real and wrong. We checked each column against the source:
+  - **Rent €/m² per district: real.** Matches the Idealista October 2026 report exactly (screenshot: `docs/idealista_oct2026_source.png`).
+  - **YoY rent change: wrong.** The AI had +5–9% everywhere; Idealista shows −3.0% to +7.2% (e.g. Ciutat Vella −2.2%, Eixample +0.5%). Replaced with Idealista's annual variation.
+  - **Sale €/m²: wrong.** Replaced with Idealista's October 2026 sale report.
+  - **2021–2026 rent history: invented.** Replaced with Barcelona Dades (Ajuntament), average monthly rent in € per district (INCASOL deposits). Note: units are €/month, not €/m².
+- The chat claimed Eixample yields "~4.7% long-term vs ~6.2% short-term". With the real data the code gives **3.83% vs 6.80%** for 75 m² at €135/night and 70% occupancy. Always quote what the code prints.
 
 **#3 train_model.py**
 - **Data leakage:** the clean file has several snapshots, so the same flat appears in train and test, which inflates R². Train/test only on the **latest snapshot**:

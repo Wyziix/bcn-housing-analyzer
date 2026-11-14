@@ -57,8 +57,8 @@ Always run commands from the repo root.
 ## Data sources
 
 - **Inside Airbnb** — Barcelona `listings.csv.gz` snapshots: http://insideairbnb.com/get-the-data
-- **Idealista** — Barcelona rent and sale price reports by district (€/m²). Report month and link recorded in the CSV / below.
-- **Open Data BCN** — average monthly rent by district (*Lloguer mitjà mensual*): https://opendata-ajuntament.barcelona.cat
+- **Idealista** — Barcelona rent and sale price reports by district (€/m²), October 2026. Links in `src/market_benchmarks.py`; screenshot of the rent table in `docs/idealista_oct2026_source.png`.
+- **Barcelona Dades (Ajuntament)** — average monthly rent in € by district, 2021–2026 (INCASOL rental deposits, CC BY 4.0): https://portaldades.ajuntament.barcelona.cat/ca/estadistiques/b37xv8wcjh
 
 ## Model results
 
