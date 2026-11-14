@@ -14,7 +14,7 @@ EADA BBAI — AI coding group project, class G1. Presentation 16 Nov 2026, final
 | Role | Member | Owns |
 |---|---|---|
 | #1 Data engineer (Airbnb) | _TBD_ | `src/clean_airbnb.py`, `data/airbnb_clean.csv` |
-| #2 Market benchmarks (Idealista + history) | _TBD_ | `src/market_benchmarks.py`, `data/idealista_*.csv`, `data/bcn_rent_history.csv` |
+| #2 Market benchmarks (Idealista + history) | Igor Stachowiak | `src/market_benchmarks.py`, `data/idealista_*.csv`, `data/bcn_rent_history.csv` |
 | #3 ML engineer | _TBD_ | `src/train_model.py`, `models/` |
 | #4 Frontend (Streamlit) | _TBD_ | `app.py` |
 | #5 Repo lead, QA, presentation | Gleb Kopenkin | repo setup, `README.md`, `requirements.txt`, slides |
