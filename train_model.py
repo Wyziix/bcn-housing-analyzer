@@ -118,6 +118,15 @@ def main():
     print(f"scikit-learn version: {sklearn.__version__}")
     df = load_data()
 
+    # Keep only the latest snapshot: the same flat appears in every snapshot,
+    # so mixing them would put the same flat in both train and test (leakage).
+    if "snapshot" in df.columns:
+        latest = sorted(df["snapshot"].unique())[-1]
+        df = df[df["snapshot"] == latest]
+        print(f"Using latest snapshot only: {latest} ({len(df)} listings)")
+    else:
+        print("WARNING: no 'snapshot' column found, using all rows.")
+
     X = df[CAT_FEATURES + NUM_FEATURES]
     y = df[TARGET]
 
