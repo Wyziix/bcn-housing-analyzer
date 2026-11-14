@@ -1,11 +1,23 @@
 """Market benchmarks: Airbnb (short-term) vs Idealista (long-term) rent in Barcelona.
 
-DATA NOTE: the CSV figures are approximate, for demo. They are NOT verified
-official data. Before presenting them as official, replace them with the real
-Idealista Barcelona price report and the Open Data BCN export, and record the
-download date and link here:
-    Idealista source / date:  TODO
-    Open Data BCN source / date: TODO
+DATA SOURCES (accessed 2026-11-14)
+- data/idealista_oct2026.csv  (rent and sale EUR/m2 per district, rent YoY %)
+    Idealista, price reports for Barcelona, October 2026:
+    https://www.idealista.com/sala-de-prensa/informes-precio-vivienda/alquiler/cataluna/barcelona-provincia/barcelona/
+    https://www.idealista.com/sala-de-prensa/informes-precio-vivienda/venta/cataluna/barcelona-provincia/barcelona/
+    City averages in the reports: rent 20.5 EUR/m2, sale 5,463 EUR/m2.
+- data/bcn_rent_history.csv  (average monthly rent in EUR per district, 2021-2026)
+    Barcelona Dades (Ajuntament de Barcelona), "Preu mitja (EUR) del lloguer
+    d'habitatges". Original source: Generalitat de Catalunya, Secretaria
+    d'Habitatge, from rental deposits at INCASOL. Licence CC BY 4.0. Updated 03/11/2026.
+    https://portaldades.ajuntament.barcelona.cat/ca/estadistiques/b37xv8wcjh
+
+CAVEATS
+- The history is in EUR per MONTH (not EUR/m2) and 2026 is a partial year.
+  The Idealista figures are asking prices in EUR/m2; the two series differ in
+  source and unit, so compare trends, not levels.
+- The history file includes an official "Barcelona" city row, used as the city line.
+- Occupancy (default 70%) is an adjustable assumption, not a sourced figure.
 """
 
 from pathlib import Path
@@ -17,6 +29,7 @@ IDEALISTA_PATH = BASE_DIR / "data" / "idealista_oct2026.csv"
 HISTORY_PATH = BASE_DIR / "data" / "bcn_rent_history.csv"
 
 DAYS_PER_MONTH = 30
+CITY_ROW = "Barcelona"
 
 
 def load_idealista_benchmarks(path=IDEALISTA_PATH) -> pd.DataFrame:
@@ -74,9 +87,9 @@ def compare_airbnb_vs_idealista(
 
 
 def get_district_history(district: str, history_path=HISTORY_PATH) -> pd.DataFrame:
-    """Return the district's EUR/m2 trend next to the Barcelona average.
+    """Return the district's avg monthly rent (EUR/month) next to the city line.
 
-    The city average is a simple mean of the districts (not weighted).
+    Columns: year, "<district> (EUR/month)", "Barcelona (EUR/month)".
     """
     df = pd.read_csv(history_path)
 
@@ -84,16 +97,14 @@ def get_district_history(district: str, history_path=HISTORY_PATH) -> pd.DataFra
     if dist_df.empty:
         raise ValueError(f"District '{district}' not found in history data.")
 
-    city_avg = (
-        df.groupby("year", as_index=False)["rent_eur_m2"]
-        .mean()
-        .round(2)
-        .rename(columns={"rent_eur_m2": "Barcelona Avg (EUR/m2)"})
+    city_df = (
+        df[df["district"] == CITY_ROW][["year", "avg_rent_eur_month"]]
+        .rename(columns={"avg_rent_eur_month": f"{CITY_ROW} (EUR/month)"})
     )
-    dist_df = dist_df[["year", "rent_eur_m2"]].rename(
-        columns={"rent_eur_m2": f"{district} (EUR/m2)"}
+    dist_df = dist_df[["year", "avg_rent_eur_month"]].rename(
+        columns={"avg_rent_eur_month": f"{district} (EUR/month)"}
     )
-    return pd.merge(dist_df, city_avg, on="year")
+    return pd.merge(dist_df, city_df, on="year")
 
 
 if __name__ == "__main__":
