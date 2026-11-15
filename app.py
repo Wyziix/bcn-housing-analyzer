@@ -31,8 +31,6 @@ DISTRICTS = [
 MODEL_PATH = "models/price_model.pkl"
 
 
-
-
 @st.cache_resource
 def load_model(path: str):
     if os.path.exists(path):
@@ -40,14 +38,11 @@ def load_model(path: str):
     return None
 
 
-
-
 def predict_nightly_rate(model, features: dict) -> float:
     """Uses trained ML pipeline if available; otherwise uses a baseline heuristic for UI testing."""
     if model is not None:
         input_df = pd.DataFrame([features])
         return float(model.predict(input_df)[0])
-
 
     # Temporary fallback before Teammate #3 pushes price_model.pkl
     base = 65.0 + (features["bedrooms"] * 28.0) + (features["accommodates"] * 8.0)
@@ -57,8 +52,6 @@ def predict_nightly_rate(model, features: dict) -> float:
         base *= 1.15
     base += features["has_ac"] * 10 + features["has_elevator"] * 6
     return round(base, 2)
-
-
 
 
 # --- HEADER ---
@@ -76,6 +69,7 @@ st.sidebar.header("1. Apartment Specifications")
 district = st.sidebar.selectbox("District", DISTRICTS, index=1)
 room_type = st.sidebar.selectbox("Listing Type", ["Entire home/apt", "Private room", "Shared room"])
 sqm = st.sidebar.slider("Size (m²)", min_value=25, max_value=200, value=75, step=5)
+st.sidebar.caption("Only affects the Idealista comparison, not the predicted nightly price.")  # FIX 4
 accommodates = st.sidebar.slider("Guests Accommodated", min_value=1, max_value=10, value=4)
 bedrooms = st.sidebar.slider("Bedrooms", min_value=0, max_value=6, value=2)
 bathrooms = st.sidebar.slider("Bathrooms", min_value=1.0, max_value=4.0, value=1.0, step=0.5)
@@ -147,7 +141,7 @@ left_col, right_col = st.columns([1.3, 1])
 
 
 with left_col:
-    st.subheader(f"Multi-Year Rent Evolution: {district} vs. Barcelona Average")
+    st.subheader(f"Multi-Year Rent Evolution (€/month): {district} vs. Barcelona city")  # FIX 3
     history_df = get_district_history(district).set_index("year")
     st.line_chart(history_df)
 
@@ -159,5 +153,5 @@ with right_col:
         "Monthly Revenue (€)": [benchmark["airbnb_monthly_revenue"], benchmark["idealista_monthly_rent"]],
         "Gross Annual Yield (%)": [f"{benchmark['short_term_gross_yield_pct']}%", f"{benchmark['long_term_gross_yield_pct']}%"],
     })
-    st.dataframe(summary_table, hide_index=True, use_container_width=True)
-    st.caption(f"YoY district rent growth in {district}: +{benchmark['yoy_rent_growth_pct']}% (Idealista Oct 2026).")
+    st.dataframe(summary_table, hide_index=True)  # FIX 2: removed deprecated use_container_width
+    st.caption(f"YoY district rent growth in {district}: {benchmark['yoy_rent_growth_pct']:+}% (Idealista Oct 2026).")  # FIX 1
