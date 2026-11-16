@@ -2,7 +2,7 @@
 
 A Streamlit app that predicts the fair nightly price of a Barcelona Airbnb listing with machine learning, tells you if a listing is a good deal or overpriced, and compares short-term (Airbnb) income with long-term rent (Idealista) for the same flat.
 
-EADA BBAI — AI coding group project, class G1. Presentation 16 Nov 2026, final delivery 30 Nov 2026.
+EADA BBAI — AI coding group project, class G1.
 
 ## Who it's for
 
