@@ -73,6 +73,8 @@ st.sidebar.caption("Only affects the Idealista comparison, not the predicted nig
 accommodates = st.sidebar.slider("Guests Accommodated", min_value=1, max_value=10, value=4)
 bedrooms = st.sidebar.slider("Bedrooms", min_value=0, max_value=6, value=2)
 bathrooms = st.sidebar.slider("Bathrooms", min_value=1.0, max_value=4.0, value=1.0, step=0.5)
+number_of_reviews = st.sidebar.slider("Number of reviews", min_value=0, max_value=500, value=25)
+review_scores_rating = st.sidebar.slider("Review score", min_value=1.0, max_value=5.0, value=4.8, step=0.1)
 
 
 st.sidebar.header("2. Amenities")
@@ -95,8 +97,8 @@ features = {
     "bedrooms": bedrooms,
     "beds": max(1, bedrooms),
     "bathrooms": bathrooms,
-    "review_scores_rating": 4.8,
-    "number_of_reviews": 25,
+    "review_scores_rating": review_scores_rating,
+    "number_of_reviews": number_of_reviews,
     "has_ac": has_ac,
     "has_wifi": has_wifi,
     "has_elevator": has_elevator,
