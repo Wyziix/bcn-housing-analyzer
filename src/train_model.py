@@ -1,7 +1,7 @@
 """
 src/train_model.py  (Teammate #3 - ML Engineer)
 
-Trains Ridge (baseline) vs Random Forest on data/airbnb_clean.csv,
+Trains Ridge (baseline) vs Random Forest vs XGBoost on data/airbnb_clean.csv,
 saves the WINNING pipeline to models/price_model.pkl and feature
 importances to models/feature_importance.csv.
 
@@ -22,6 +22,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from xgboost import XGBRegressor
 
 DATA_PATH = "data/airbnb_clean.csv"
 MODEL_OUTPUT_PATH = "models/price_model.pkl"
@@ -46,7 +47,7 @@ TARGET = "price"
 
 
 def build_preprocessor() -> ColumnTransformer:
-    """Fresh preprocessor per pipeline so the two models never share state."""
+    """Fresh preprocessor per pipeline so the models never share state."""
     return ColumnTransformer(
         transformers=[
             ("cat", OneHotEncoder(handle_unknown="ignore"), CAT_FEATURES),
@@ -95,7 +96,7 @@ def evaluate_model(name: str, model: Pipeline, X_test, y_test) -> dict:
 
 
 def get_feature_importance(pipeline: Pipeline) -> pd.DataFrame:
-    """Works for both Random Forest (importances) and Ridge (|coefficients|)."""
+    """Works for tree models (RF, XGBoost: feature_importances_) and Ridge (|coefficients|)."""
     pre = pipeline.named_steps["preprocessor"]
     reg = pipeline.named_steps["regressor"]
     names = list(pre.named_transformers_["cat"].get_feature_names_out(CAT_FEATURES))
@@ -148,6 +149,21 @@ def main():
                         n_estimators=150,
                         max_depth=16,
                         min_samples_leaf=5,
+                        random_state=42,
+                        n_jobs=-1,
+                    ),
+                ),
+            ]
+        ),
+        "XGBoost Regressor": Pipeline(
+            [
+                ("preprocessor", build_preprocessor()),
+                (
+                    "regressor",
+                    XGBRegressor(
+                        n_estimators=300,
+                        max_depth=6,
+                        learning_rate=0.05,
                         random_state=42,
                         n_jobs=-1,
                     ),
