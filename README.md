@@ -66,8 +66,9 @@ _To be filled in by #3 after training (test set, latest snapshot only)._
 
 | Model | MAE (€/night) | RMSE (€/night) | R² |
 |---|---|---|---|
-| Ridge (baseline) | | | |
-| Random Forest | | | |
+| Ridge (baseline) | 68.94 | 89.75 | 0.448 |
+| Random Forest | 55.72 | 77.80 | 0.585 |
+| XGBoost | 56.33 | 78.48 | 0.578 |
 
 ## Limitations
 
